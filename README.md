@@ -7,7 +7,7 @@ This is a coding assessment with two parts:
         - https://spring.io/guides/
 2. An Angular GUI (connected to the Github Issues API)
 
-**Note:** This coding assessment's documentation is at the repo's (wiki pages)[https://github.com/KevinWhy/Assessment1/wiki].
+**Note:** This coding assessment's documentation is at the repo's [wiki pages](https://github.com/KevinWhy/Assessment1/wiki).
 
 ## REST API
 The API defines a simple notes collection with CRUD (Create, Read, Update, Delete) operations.
