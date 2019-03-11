@@ -19,7 +19,7 @@ public class Note {
 	private Integer id;
 	@NotNull
 	@Size(max=255) // 255 == max because of SQL storage type
-	private String body; // TODO: document max length allowed, & that empty notes allowed
+	private String body;
 	
 	// id getter & setter
 	public Integer getId() {
