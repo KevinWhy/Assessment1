@@ -6,7 +6,7 @@ import org.springframework.data.repository.CrudRepository;
 /**
  * This interface specifies CRUD operations for the Note model. (It abstracts away the SQL...)
  * However, it doesn't define REST API endpoints.
- * @author oKevi
+ * @author Kevin Yang
  *
  */
 public interface NoteRepository extends CrudRepository<Note, Integer> {

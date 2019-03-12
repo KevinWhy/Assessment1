@@ -15,7 +15,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 /**
  * This class handles the notes collection endpoints.
- * @author oKevi
+ * @author Kevin Yang
  *
  */
 @RestController
@@ -53,7 +53,7 @@ public class NoteController {
 		return ResponseEntity.created(result).build();
 	}
 	
-	// Methods for specific notes ////////////////////////////////////////
+	// Methods for specific notes  ------------------------------------//
 	/**
 	 * Find one note by it's id.
 	 * @param id Id to search for
