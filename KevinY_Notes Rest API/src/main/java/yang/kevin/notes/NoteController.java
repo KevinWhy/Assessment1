@@ -35,7 +35,7 @@ public class NoteController {
 	public ResponseEntity<?> getAllNotes(@RequestParam(name="query", required=false) String content) {
 		// Try applying filter
 		if (content != null)
-			return ResponseEntity.ok(noteRepository.findNotesByBodyContaining(content));
+			return ResponseEntity.ok(noteRepository.findNotesByBodyIgnoreCaseContaining(content));
 		// Otherwise, just return all notes
 		return ResponseEntity.ok(noteRepository.findAll());
 	}

@@ -1,3 +1,6 @@
+# Ignore any testing databases
+*.db
+
 # Eclipse
 .classpath
 .project

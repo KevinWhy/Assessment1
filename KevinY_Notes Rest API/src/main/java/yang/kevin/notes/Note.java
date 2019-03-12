@@ -18,7 +18,7 @@ public class Note {
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Integer id;
 	@NotNull
-	@Size(max=255) // 255 == max because of SQL storage type
+	@Size(max=255) // 255 == max because of database storage type
 	private String body;
 	
 	// id getter & setter
