@@ -2,7 +2,7 @@ package yang.kevin.notes;
 
 import org.springframework.data.repository.CrudRepository;
 
-// Handle database cmds for the CRUD operations
+// Handle database commands for the CRUD operations
 /**
  * This interface specifies CRUD operations for the Note model. (It abstracts away the SQL...)
  * However, it doesn't define REST API endpoints.
