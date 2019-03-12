@@ -21,6 +21,14 @@ public class Note {
 	@Size(max=255) // 255 == max because of database storage type
 	private String body;
 	
+	// Needed to use as database Entity
+	public Note() {}
+	
+	// Fast way to define Notes for testing
+	public Note(String body) {
+		setBody(body);
+	}
+	
 	// id getter & setter
 	public Integer getId() {
 		return id;
