@@ -1,6 +1,27 @@
 <h2>Issues</h2>
-<ol>
-	<li *ngFor="let issue of issuesPage.issues | async">
-		Issue {{issue.number}}: {{issue.title}}
-	</li>
-</ol>
+<table class="table table-striped">
+	<thead>
+	<tr>
+		<th scope="col">Issue Number</th>
+		<th scope="col">Title</th>
+		<th scope="col">Body</th>
+		<th scope="col">User</th>
+		<th scope="col">Asignees</th>
+	</tr>
+	</thead>
+	<tbody>
+		<tr *ngFor="let issue of issuesPage.issues | async">
+			<td scope="row">
+				<a [href]="'https://github.com/angular/angular/issues/'+ issue.number">
+					{{issue.number}}
+				</a>
+			</td>
+			<td>{{issue.title}}</td>
+			<td [innerHTML]="issue.body"></td>
+			<td>{{issue.user.login}}</td>
+			<td><ul>
+				<li *ngFor="let asignee of issue.asignees">{{asignee.login}}</li>
+			</ul></td>
+		</tr>
+	</tbody>
+</table>
