@@ -3,7 +3,10 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
+  production: false,
+  useCachedResponses: true, // Github Issues API has a low limit. This flag has the IssueService return cached data instead
+  repoOwner: 'angular',
+  repoName: 'angular'
 };
 
 /*

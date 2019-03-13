@@ -1,0 +1,17 @@
+cache-control: public, max-age=60, s-maxage=60
+
+content-type: application/json; charset=utf-8
+
+etag: W/\"27d64f5f272c5e44e59720c5ea4744d1\"
+
+link: <https://api.github.com/repositories/24195339/issues?since=2019-02-12T19%3A17%3A55.700Z&page=2>; rel=\"next\", <https://api.github.com/repositories/24195339/issues?since=2019-02-12T19%3A17%3A55.700Z&page=23>; rel=\"last\"
+
+x-github-media-type: github.v3; format=json
+
+x-ratelimit-limit: 60
+
+x-ratelimit-remaining: 60
+
+x-ratelimit-reset: 1552457881
+
+<Response code == 200>
