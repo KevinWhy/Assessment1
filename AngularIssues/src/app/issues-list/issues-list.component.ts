@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 
-import { IssuesService, RateLimit } from '@app/issues.service';
+import { IssueService } from '@app/issue-service/issue.service';
+import { RateLimit } from '@app/issue-service/rate-limit.class';
+import { PaginatedIssueList } from '@app/issue-service/paginated-issue-list.class';
 
 @Component({
   selector: 'ais-issues-list',
@@ -8,19 +10,15 @@ import { IssuesService, RateLimit } from '@app/issues.service';
   styleUrls: ['./issues-list.component.scss']
 })
 export class IssuesListComponent implements OnInit {
-  issues: any[];
+  issuesPage: PaginatedIssueList;
 
-  constructor(private issueService: IssuesService) { }
+  constructor(private issueService: IssueService) { }
 
   ngOnInit() {
+    this.issuesPage = this.issueService.getIssues();
     this.issueService.getRateLimit().then((limit: RateLimit) => {
       console.log("LIMIT:",limit);
     });
-    console.log("Starting req!");
-    this.issueService.getIssues()
-      .then((resp) => { // TODO: Handle errors
-        this.issues = resp.data;
-      });
   }
 
 }

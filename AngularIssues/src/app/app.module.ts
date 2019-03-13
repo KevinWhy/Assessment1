@@ -3,7 +3,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 
 import { AppComponent } from './app.component';
-import { IssuesService } from './issues.service';
+import { IssueService } from './issue-service/issue.service';
 import { IssuesListComponent } from './issues-list/issues-list.component';
 
 @NgModule({
@@ -16,7 +16,7 @@ import { IssuesListComponent } from './issues-list/issues-list.component';
     HttpClientModule,
   ],
   providers: [
-    IssuesService,
+    IssueService,
   ],
   bootstrap: [AppComponent]
 })
