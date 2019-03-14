@@ -1,0 +1,13 @@
+.issue-body {
+	.body-container {
+		max-width: 50em;
+		max-height: 5em;
+		overflow: hidden;
+	}
+	
+	&.expand .body-container {
+		max-height: initial;
+		overflow-x: scroll;
+		overflow-y: auto;
+	}
+}

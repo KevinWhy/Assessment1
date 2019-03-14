@@ -1,0 +1,16 @@
+<div class="container" [ngClass]="{'shorten': collapsed, 'showFull': !collapsed}"
+	[ngStyle]="{'max-width.px': width,
+	            'max-height.px': collapsed ? collapsedHeight : null}"
+>
+	<div #content>		<ng-content></ng-content>		</div>
+</div>
+<button *ngIf="canCollapse && collapsed" (click)="toggleCollapsed()"
+	type="button" class="btn btn-primary btn-sm btn-block"
+>
+	Expand
+</button>
+<button *ngIf="canCollapse && !collapsed" (click)="toggleCollapsed()"
+	type="button" class="btn btn-secondary btn-sm btn-block"
+>
+	Collapse
+</button>

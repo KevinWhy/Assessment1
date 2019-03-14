@@ -1,4 +1,3 @@
-<h2>Issues</h2>
 <table class="table table-striped">
 	<thead>
 	<tr>
@@ -17,7 +16,9 @@
 				</a>
 			</td>
 			<td>{{issue.title}}</td>
-			<td [innerHTML]="issue.body"></td>
+			<td><ais-collapsible width="750" collapsedHeight="60">
+				<div markdown [data]="issue.body"></div>
+			</ais-collapsible></td>
 			<td>{{issue.user.login}}</td>
 			<td><ul>
 				<li *ngFor="let asignee of issue.asignees">{{asignee.login}}</li>
