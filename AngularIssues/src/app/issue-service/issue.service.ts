@@ -22,14 +22,16 @@ export class IssueService {
   octokit: Octokit;
   
   getRateLimit(): Promise<RateLimit> {
+/*
     // Use cached response
     if (environment.useCachedResponses) {
-      return new Promise<RateLimit>((resolve) => {  return {
-        'current': NaN,
-        'limit':   NaN,
+      return new Promise<RateLimit>((resolve) => resolve(  {
+        'remaining': NaN,
+        'limit':     NaN,
         'resetDate': new Date()
-      };  });
+      }  ));
     }
+*/
     // Use live data
     return this.octokit.rateLimit.get().then((resp) => {
       // TODO: Handle failed request?
@@ -38,8 +40,8 @@ export class IssueService {
       let limit     = Number(resp.data.resources.core.limit);
       let resetTime = Number(resp.data.resources.core.reset);
       return {
-        'current': limit -numLeft,
-        'limit':   limit,
+        'remaining': numLeft,
+        'limit':     limit,
         'resetDate': new Date(resetTime *1000)
       };
     });
@@ -68,6 +70,25 @@ export class IssueService {
   
   /* Helper Functions -------------------------------*/
   
+  /* Figures out how many pages there are for this response
+  */
+  private getPageCount(requestPageNum: number, resp: any): number {
+    // Get links from request. Code from: https://github.com/gr2m/octokit-pagination-methods/blob/master/lib/get-page-links.js
+    let linkHeader = resp.link || resp.headers.link || '';
+    const links = {};
+    // link format:
+    // '<https://api.github.com/users/aseemk/followers?page=2>; rel="next", <https://api.github.com/users/aseemk/followers?page=2>; rel="last"'
+    linkHeader.replace(/<([^>]*)>;\s*rel="([\w]*)"/g, (m, uri, linkType) => {
+        links[linkType] = uri;
+    })
+    
+    // If last link not found, either: Has no pages (reqPage == 1) or at last page already
+    if (!links['last'])
+      return requestPageNum;
+    // Has last link, so return page 
+    return Number(  links['last'].match(/page=(\d+)/)[1]  );
+  }
+  
   /* Requests a page of issues from Github API.
   */
   private sendIssuesRequest(options: PageRequestOptions): Promise<PageResponse> {
@@ -75,11 +96,14 @@ export class IssueService {
     if (environment.useCachedResponses) {
       console.log("Using cached response for request:", options);
       return this.http.get(this.cachedIssuesUrl)
-        .pipe(map(  (issuesJson: Octokit.IssuesListForRepoResponseItem[]): PageResponse => {  return {
-          pageNum:   1,
-          pageCount: 1,
-          issues:    issuesJson
-        };  })  )
+        .pipe(map(  (issuesJson: Octokit.IssuesListForRepoResponseItem[]): PageResponse => {
+          issuesJson[0].title = 'PAGE '+ options.pageNum +'__'+ issuesJson[0].title; // Modify issuesJson a bit to show current page number
+          return {
+            pageNum:   options.pageNum,
+            pageCount: 23,
+            issues:    issuesJson
+          };
+        })  )
         .toPromise();
     }
     // Use live data
@@ -89,9 +113,10 @@ export class IssueService {
       repo:  environment.repoName,
       page:  options.pageNum
     }).then((resp) => {
+      const pageCount: number = this.getPageCount(options.pageNum, resp);
       return {
-        pageNum:   1, // TODO: Get page numbers!
-        pageCount: 1,
+        pageNum:   options.pageNum,
+        pageCount: pageCount,
         issues:    resp.data
       };
     });

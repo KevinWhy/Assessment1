@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { NgbPagination } from '@ng-bootstrap/ng-bootstrap';
 
 import { IssueService } from '@app/issue-service/issue.service';
-import { RateLimit } from '@app/issue-service/rate-limit.class';
 import { PaginatedIssueList } from '@app/issue-service/paginated-issue-list.class';
 
 @Component({
@@ -11,14 +11,21 @@ import { PaginatedIssueList } from '@app/issue-service/paginated-issue-list.clas
 })
 export class IssuesListComponent implements OnInit {
   issuesPage: PaginatedIssueList;
+  @ViewChild(NgbPagination)
+  pageinationElem: NgbPagination;
+  
+  get isLoadingPage(): boolean {
+    return this.issuesPage.currentPage != this.pageinationElem.page;
+  }
+  
+  onChangePage(newPage: number) {
+    this.issuesPage.getIssuePage(newPage);
+  }
 
   constructor(private issueService: IssueService) { }
 
   ngOnInit() {
     this.issuesPage = this.issueService.getIssues();
-    this.issueService.getRateLimit().then((limit: RateLimit) => {
-      console.log("LIMIT:",limit);
-    });
   }
 
 }

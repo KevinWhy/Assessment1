@@ -1,3 +1,10 @@
+<ngb-pagination class="d-flex justify-content-start"
+	[page]="issuesPage.currentPage" [pageSize]="1" [collectionSize]="issuesPage.pageCount"
+	[maxSize]="3" [rotate]="true"
+	[disabled]="isLoadingPage"
+	(pageChange)="onChangePage($event)"
+></ngb-pagination>
+<span *ngIf="isLoadingPage">LOADING</span>
 <table class="table table-striped">
 	<thead>
 	<tr>

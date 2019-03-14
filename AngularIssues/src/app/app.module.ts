@@ -8,18 +8,20 @@ import { AppComponent } from './app.component';
 import { IssueService } from './issue-service/issue.service';
 import { IssuesListComponent } from './issues-list/issues-list.component';
 import { CollapsibleComponent } from './collapsible/collapsible.component';
+import { RateLimitBarComponent } from './rate-limit-bar/rate-limit-bar.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     IssuesListComponent,
-    CollapsibleComponent
+    CollapsibleComponent,
+    RateLimitBarComponent
   ],
   imports: [
     BrowserModule,
     HttpClientModule,
     MarkdownModule.forRoot(),
-    NgbModule,
+    NgbModule.forRoot(),
   ],
   providers: [
     IssueService,

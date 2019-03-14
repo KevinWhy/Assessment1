@@ -1,0 +1,32 @@
+<div class="progress-container w-25"><span>Remaining Requests: </span>
+	<ng-container *ngIf="!hasLimit; else limitTemplate">
+		<p><ngb-progressbar type="info" [value]="100" [striped]="true"
+			height="2.25em"
+		>
+			No Limit
+		</ngb-progressbar></p>
+	</ng-container>
+
+	<ng-template #limitTemplate>
+		<p><ngb-progressbar [type]="limitFound ? 'success' : 'info'"
+			[value]="limitFound ? (limitInfo | async).remaining : 100"
+			[max]  ="limitFound ? (limitInfo | async).limit     : 100"
+			[striped]="!limitFound" [animated]="!limitFound"
+			height="2.25em"
+		>
+			<ng-container *ngIf="limitFound; else missingLimit">
+				{{(limitInfo | async).remaining}} / {{(limitInfo | async).limit}}
+			</ng-container>
+			<ng-template #missingLimit>
+				Reading Limit...
+			</ng-template>
+		</ngb-progressbar></p>
+	</ng-template>
+	
+	<i class="fas fa-question-circle" placement="top" ngbTooltip="About the Rate Limit..."></i>
+</div>
+<div class="collapse">
+	<div class="card card-body w-50 text-white bg-info">
+		Rate Limit info goes here...
+	</div>
+</div>

@@ -9,7 +9,7 @@ import { PageRequestOptions, PageResponse } from './page.classes';
 export class PaginatedIssueList {
   get currentPage(): number {  return this._currentPage;  }
   get pageCount(): number {  return this._pageCount;  }
-  get issues(): Observable<IssuesListForRepoResponseItem[]> {  return this._issues as Observable<IssuesListForRepoResponseItem[]>;  }
+  readonly issues: Observable<IssuesListForRepoResponseItem[]>;
 
   private _pageCount: number; // Total # of pages
   private _issues: Subject<IssuesListForRepoResponseItem[]>; // TODO: Clean up subject when list is dropped
@@ -45,7 +45,7 @@ export class PaginatedIssueList {
     private sendPageRequest: (list: PaginatedIssueList, options: PageRequestOptions) => Promise<PageResponse>
   ) {
     this._issues = new Subject<IssuesListForRepoResponseItem[]>();
-    this._pageCount = this._currentPage; // TODO: IMPLEMENT THIS
+    this.issues = this._issues.asObservable(); // Hide source from other classes
     this.requestIssues({pageNum: _currentPage, requestSamePage: true});
   }
 }
