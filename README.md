@@ -18,4 +18,5 @@ Users can also see notes that contain a case-insensitive string by adding a quer
 Since it's case-insensitive, "milk" or "mILk" will work as well.
 
 ## Angular GUI
-Uses the Github Issues API to display all the issues in the [Angular Github repo](https://github.com/angular/angular).
+Uses the Github Issues API to display all the issues in the [Angular Github repo](https://github.com/angular/angular)
+that were updated in the last 7 days.

@@ -2,8 +2,6 @@ import { Component, ViewChild } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { IssuesListForRepoResponseItem } from '@octokit/rest';
 
-import { IssueAssigneesComponent } from '@app/issue-sections/issue-assignees.component';
-
 @Component({
   selector: 'ais-issue-modal',
   templateUrl: './issue-modal.component.html',
@@ -11,13 +9,13 @@ import { IssueAssigneesComponent } from '@app/issue-sections/issue-assignees.com
 })
 export class IssueModalComponent {
   private modalIssue: IssuesListForRepoResponseItem = undefined;
-  assigneesHidden: boolean = true;
-  @ViewChild('issueModal')
-  modal: any;
+  public assigneesHidden: boolean = true;
+  @ViewChild('modalTemplate')
+  private modalTemplate: any;
   
   public showIssue(issue: IssuesListForRepoResponseItem): void {
     this.modalIssue = issue;
-    this.modalService.open(this.modal, {size: 'lg'});
+    this.modalService.open(this.modalTemplate, {size: 'lg'});
   }
   
   /* --------------------------------------- */

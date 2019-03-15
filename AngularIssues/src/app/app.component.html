@@ -1,5 +1,17 @@
-<div id="page-contents" class="m-5">
-	<h1>{{repoPath}} Repo Issues</h1>
+<div class="m-5 text-center">
+	<h1>{{repoTitle}} Repo Issues</h1>
+	<h6><p>
+		Displays issues from the
+		<a [href]="repoUrl" target="_blank">
+			{{repoTitle}} repo
+		</a>
+		that were updated in the last 7 days.<br />
+		However, if the search filter is modified, it can display issues
+		for any amount of time.
+	</p></h6>
 	<ais-rate-limit-bar></ais-rate-limit-bar>
+	<button class="btn btn-danger m-3"
+		(click)="maxOutRateLimit()" *ngIf="showRateBreakBttn"
+	>DEV DEBUG: MAX OUT REQUEST LIMIT</button>
 	<ais-issues-list></ais-issues-list>
 </div>

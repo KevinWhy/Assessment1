@@ -1,18 +1,12 @@
+/* Import card-bg color variable */
 @import "~bootstrap/scss/bootstrap";
 
-$issue-body-height: 5em;
-
-#pagination-container {
-	text-align: center;
-	> * { /* Targets ngb-pagination */
-		display: inline-flex !important;
-	}
-}
-
+/* Show a small section of the issue body */
 .issue-body {
-	max-height: $issue-body-height;
+	max-height: 5em;
 	overflow: hidden;
 }
+/* Cover issue body with a transparent gradient */
 .issue-preview {
 	position: relative;
 	&:after {

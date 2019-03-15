@@ -4,9 +4,11 @@
 
 export const environment = {
   production: false,
-  useCachedResponses: true, // Github Issues API has a low limit. This flag has the IssueService return cached data instead
+  useCachedResponses: false, // Github Issues API has a low limit. This flag has the IssueService return cached data instead
   repoOwner: 'angular',
-  repoName: 'angular'
+  repoName: 'angular',
+  
+  cachedIssuesUrl: 'assets/savedIssuesResponse.json',
 };
 
 /*

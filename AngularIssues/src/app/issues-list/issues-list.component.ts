@@ -1,9 +1,9 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
-import { NgbPagination } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbPagination } from '@ng-bootstrap/ng-bootstrap';
 import { IssuesListForRepoResponseItem } from '@octokit/rest';
 
 import { IssueService } from '@app/issue-service/issue.service';
-import { PaginatedIssueList } from '@app/issue-service/paginated-issue-list.class';
+import { PaginatedIssueList, ListStatus, FailReason } from '@app/issue-service/paginated-issue-list.class';
 import { IssueModalComponent } from '@app/issue-modal/issue-modal.component';
 
 @Component({
@@ -13,18 +13,41 @@ import { IssueModalComponent } from '@app/issue-modal/issue-modal.component';
 })
 export class IssuesListComponent implements OnInit {
   issuesPage: PaginatedIssueList;
-  @Input()
-  numColumns: 4;
+  
   @ViewChild(NgbPagination)
-  pageinationElem: NgbPagination;
+  private pageinationElem: NgbPagination;
+  @ViewChild('loadingModal')
+  private loadingModal: any;
   @ViewChild(IssueModalComponent)
-  issueModal: IssueModalComponent;
+  private issueModal: IssueModalComponent;
   
   get isLoadingPage(): boolean {
-    return this.issuesPage.currentPage != this.pageinationElem.page;
+    return this.issuesPage.status == ListStatus.Getting;
+  }
+  get hasError(): boolean {
+    return this.issuesPage.status == ListStatus.Failed;
+  }
+  get errorMsg(): string {
+    if (this.issuesPage.status != ListStatus.Failed)
+      return null;
+    switch (this.issuesPage.failReason) {
+      case FailReason.LimitExceeded:
+        return "Cannot get issues. Exceeded request limit."
+      case FailReason.NetworkError:
+        return "Failed get issues because of the network."
+      default: // UnknownReason
+        return "Failed get issues for some unknown reason."
+    }
   }
   
   onChangePage(newPage: number) {
+    // Open a modal that can only be dismissed once the page is loaded
+    this.modalService.dismissAll();
+    this.modalService.open(this.loadingModal, {
+      centered: true,
+      beforeDismiss: () => !this.isLoadingPage
+    });
+    // Load the issues
     this.issuesPage.getIssuePage(newPage);
   }
   expandIssue(issue: IssuesListForRepoResponseItem) {
@@ -33,10 +56,17 @@ export class IssuesListComponent implements OnInit {
   
   /* ------------------------------------------ */
 
-  constructor(private issueService: IssueService) { }
+  constructor(
+    private issueService: IssueService,
+    private modalService: NgbModal
+  ) { }
 
   ngOnInit() {
     this.issuesPage = this.issueService.getIssues();
+    // When issues are loaded, dismiss loading modal
+    this.issuesPage.issues.subscribe(() => {
+      this.modalService.dismissAll();
+    });
   }
 
 }

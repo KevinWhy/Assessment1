@@ -1,13 +1,33 @@
-<div id="pagination-container">
-	<ngb-pagination class="d-flex justify-content-start"
-		[page]="issuesPage.currentPage" [pageSize]="1" [collectionSize]="issuesPage.pageCount"
-		[maxSize]="3" [rotate]="true"
+<div class="text-center">
+	<span class="font-weight-bold mr-3">Page:</span>
+	<ngb-pagination class="d-inline-flex justify-content-start"
+		[page]="issuesPage.currentPage"
+		[pageSize]="1" [collectionSize]="issuesPage.pageCount"
+		[maxSize]="3" [rotate]="true" [directionLinks]="false"
 		[disabled]="isLoadingPage"
 		(pageChange)="onChangePage($event)"
-	></ngb-pagination>
+	>
+		<ng-template ngbPaginationFirst>
+			<i class="fas fa-angle-double-left"></i>
+		</ng-template>
+		<ng-template ngbPaginationPrevious>
+			<i class="fas fa-angle-left"></i>
+		</ng-template>
+		<ng-template ngbPaginationNext>
+			<i class="fas fa-angle-right"></i>
+		</ng-template>
+		<ng-template ngbPaginationLast>
+			<i class="fas fa-angle-double-right"></i>
+		</ng-template>
+			
+	</ngb-pagination>
 </div>
-<span *ngIf="isLoadingPage">LOADING</span>
 
+<div class="w-100 card card-body text-white text-center bg-danger"
+	*ngIf="hasError"
+>
+	{{errorMsg}}
+</div>
 
 <div class="d-sm-flex flex-row flex-wrap">
 	<div class="w-25" *ngFor="let issue of issuesPage.issues | async">
@@ -21,6 +41,7 @@
 						<ais-issue-user [user]="issue.user"></ais-issue-user>
 					</h6>
 
+					<!-- User must expand issue to view details like assignees -->
 					<ais-issue-assignees [issue]="issue"
 						disabled="true"
 					>
@@ -32,4 +53,12 @@
 	</div>
 </div>
 
+<!-- This modal is shown when a page is loading -->
+<ng-template #loadingModal>
+	<div class="modal-body">
+		Loading issues...
+	</div>
+</ng-template>
+
+<!-- This modal is shown when an issue-preview is clicked -->
 <ais-issue-modal></ais-issue-modal>

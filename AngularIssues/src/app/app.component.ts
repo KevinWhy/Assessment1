@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 
+import { IssueService } from '@app/issue-service/issue.service';
 import { environment } from '@environments/environment';
 
 @Component({
@@ -8,8 +9,20 @@ import { environment } from '@environments/environment';
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
-  repoPath: string;
+  repoTitle: string;
+  showRateBreakBttn: boolean = (
+    !environment.production && !environment.useCachedResponses
+  );
+  get repoUrl(): string {  return this.issueService.getRepoUrl();  }
+  
+  maxOutRateLimit(): void {
+    if (this.showRateBreakBttn)
+      this.issueService.maxOutRateLimit();
+  }
+  
+  constructor(private issueService: IssueService) { }
+  
   ngOnInit() {
-    this.repoPath = environment.repoOwner +'/'+ environment.repoName;
+    this.repoTitle = environment.repoOwner +'/'+ environment.repoName;
   }
 }

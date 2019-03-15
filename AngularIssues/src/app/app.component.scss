@@ -1,6 +1,3 @@
-#page-contents {
-	text-align: center;
-	> ais-issues-list {
-		text-align: initial;
-	}
+ais-issues-list { /* Don't center text in the issue cards */
+	text-align: initial;
 }

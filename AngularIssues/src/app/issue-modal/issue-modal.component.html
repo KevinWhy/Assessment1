@@ -1,9 +1,13 @@
-<ng-template #issueModal let-modal>
+<!-- The 'modal' variable == an NgbActiveModal, not a template -->
+<ng-template #modalTemplate let-modal>
 	<div class="modal-header">
 		<h4 class="modal-title">
 			<ais-issue-title [issue]="modalIssue"></ais-issue-title>
 			<h6 class="ml-5">
 				<ais-issue-user [user]="modalIssue.user"></ais-issue-user>
+				posted this issue on {{modalIssue.created_at}}
+				<br />
+				Issue was updated on {{modalIssue.updated_at}}
 			</h6>
 		</h4>
 		<button type="button" class="close" aria-label="Close"
@@ -14,9 +18,6 @@
 		<ais-issue-assignees [issue]="modalIssue"
 			[hidden]="true"
 		></ais-issue-assignees>
-		<div id="modalAssignees" class="card card-body" [ngbCollapse]="assigneesHidden">
-			USERS!
-		</div>
 		<div markdown [data]="modalIssue.body"></div>
 	</div>
 </ng-template>

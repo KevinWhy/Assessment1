@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import * as Octokit from '@octokit/rest';
+import { Observable, BehaviorSubject } from 'rxjs';
 // To use cached data
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
@@ -17,40 +18,15 @@ TODO: Use interceptor instead of implementing cached data here
   providedIn: 'root'
 })
 export class IssueService {
-  private readonly cachedHeadersUrl: string = 'assets/savedResponseHeaders.json';
-  private readonly cachedIssuesUrl:  string = 'assets/savedIssuesResponse.json';
   octokit: Octokit;
+  readonly limitInfo: Observable<RateLimit>;
+  private _limitInfo: BehaviorSubject<RateLimit>;
   
   getRepoUrl(): string {
     return 'https://github.com/'+ environment.repoOwner +'/'+ environment.repoName;
   }
   
-  getRateLimit(): Promise<RateLimit> {
-    // Use cached response
-    if (environment.useCachedResponses) {
-      return new Promise<RateLimit>((resolve) => resolve(  {
-        'remaining': NaN,
-        'limit':     NaN,
-        'resetDate': new Date()
-      }  ));
-    }
-    // Use live data
-    return this.octokit.rateLimit.get().then((resp) => {
-      // TODO: Handle failed request?
-      // Note: The data.rate object is deprecated. Source: https://developer.github.com/v3/rate_limit/#deprecation-notice
-      let numLeft   = Number(resp.data.resources.core.remaining);
-      let limit     = Number(resp.data.resources.core.limit);
-      let resetTime = Number(resp.data.resources.core.reset);
-      return {
-        'remaining': numLeft,
-        'limit':     limit,
-        'resetDate': new Date(resetTime *1000)
-      };
-    });
-  }
-  
   /* Get a list of issues for a repo.
-     // TODO: Search filters
   */
   getIssues(pageNum: number = 1): PaginatedIssueList {
     return new PaginatedIssueList(pageNum,
@@ -68,6 +44,37 @@ export class IssueService {
         return this.sendIssuesRequest(options);
       }
     ); // End new PaginatedIssueList
+  }
+  
+  /* To test error mssages for maxed-out rate limit.
+  */
+  maxOutRateLimit(isContinuingReq: boolean = false): void {
+    if (environment.useCachedResponses) {
+      console.error("Using cached responses, so app cannot max out rate limit.");
+      return;
+    }
+    if (!environment.production) {
+      if (isContinuingReq)
+        console.log("\tSending another batch of requests...");
+      else
+        console.log("Maxing out rate limit...");
+      this.octokit.paginate(
+        this.octokit.issues.listForRepo.endpoint.merge({
+          owner: environment.repoOwner,
+          repo:  environment.repoName
+        })
+      )
+        .then((resp) => {
+          console.log("Request batch completed:", resp);
+          this.updateLimitInfo();
+          this.maxOutRateLimit(true);
+        })
+        .catch((err) => {
+          console.log("Limit might've been reached!", err);
+          this.updateLimitInfo();
+        })
+      
+    }
   }
   
   /* Helper Functions -------------------------------*/
@@ -92,14 +99,17 @@ export class IssueService {
   }
   
   /* Requests a page of issues from Github API.
+     TODO: Dynamic search filters
   */
   private sendIssuesRequest(options: PageRequestOptions): Promise<PageResponse> {
     // Use cached data
     if (environment.useCachedResponses) {
       console.log("Using cached response for request:", options);
-      return this.http.get(this.cachedIssuesUrl)
+      return this.http.get(environment.cachedIssuesUrl)
         .pipe(map(  (issuesJson: Octokit.IssuesListForRepoResponseItem[]): PageResponse => {
-          issuesJson[0].title = 'PAGE '+ options.pageNum +'__'+ issuesJson[0].title; // Modify issuesJson a bit to show current page number
+          // Modify issuesJson a bit to show current page number
+          issuesJson[0].title = 'PAGE '+ options.pageNum +'__'+ issuesJson[0].title;
+          this.updateLimitInfo();
           return {
             pageNum:   options.pageNum,
             pageCount: 23,
@@ -109,24 +119,59 @@ export class IssueService {
         .toPromise();
     }
     // Use live data
+    let earliestUpdateDate = new Date();
+    earliestUpdateDate.setDate(  earliestUpdateDate.getDate() -7  );
     // TODO: Cache other page requests?
     return this.octokit.issues.listForRepo({
       owner: environment.repoOwner,
       repo:  environment.repoName,
+      since: earliestUpdateDate.toISOString(), // Right now, search filter is hard-coded
       page:  options.pageNum
     }).then((resp) => {
       const pageCount: number = this.getPageCount(options.pageNum, resp);
+      this.updateLimitInfo(); // Notice: This runs after issues acquired
       return {
         pageNum:   options.pageNum,
         pageCount: pageCount,
         issues:    resp.data
       };
     });
-    // TODO: Handle errors
+  }
+  
+  /* Update limitInfo observable.
+  */
+  private updateLimitInfo(): void {
+    // Use cached response
+    if (environment.useCachedResponses) {
+      this._limitInfo.next({
+        'remaining': NaN,
+        'limit':     NaN,
+        'resetDate': new Date()
+      });
+    // Use live data
+    } else {
+      this.octokit.rateLimit.get().then((resp) => {
+        // TODO: Handle failed request?
+        // Note: I don't use data.rate because it is deprecated. Source: https://developer.github.com/v3/rate_limit/#deprecation-notice
+        let numLeft   = Number(resp.data.resources.core.remaining);
+        let limit     = Number(resp.data.resources.core.limit);
+        let resetTime = Number(resp.data.resources.core.reset);
+        this._limitInfo.next({
+          'remaining': numLeft,
+          'limit':     limit,
+          'resetDate': new Date(resetTime *1000)
+        });
+      });
+    }
   }
   
   constructor(private http: HttpClient) {
     this.octokit = new Octokit();
-    //console.log("octo:",this.octokit);
+    this._limitInfo = new BehaviorSubject<RateLimit>({
+      remaining: undefined, limit: undefined, resetDate: undefined
+    });
+    // Hide source from listeners
+    this.limitInfo = this._limitInfo.asObservable();
+    this.updateLimitInfo();
   }
 }

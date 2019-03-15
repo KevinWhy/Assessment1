@@ -1,35 +1,43 @@
-<div class="progress-container w-25">
-	<span class="font-weight-bold">Remaining Requests: </span>
-	<ng-container *ngIf="!hasLimit; else limitTemplate">
-		<p><ngb-progressbar type="info" [value]="100" [striped]="true"
-			height="2.25em"
+<div class="w-25 d-inline-flex align-items-center">
+	<span class="font-weight-bold flex-shrink-1">Remaining Requests: </span>
+	<p [ngSwitch]="displayType" class="flex-grow-1 m-2">
+		<ngb-progressbar *ngSwitchCase="'NoLimit'"
+				[value]="100"  [max]="100"
+				type="info" [striped]="true" height="2.25em"
+			>
+				No Limit
+		</ngb-progressbar>
+		
+		<ngb-progressbar *ngSwitchCase="'UnknownLimit'"
+			[value]="100" [max]="100"
+			type="info" [striped]="true" [animated]="true" height="2.25em"
 		>
-			No Limit
-		</ngb-progressbar></p>
-	</ng-container>
-
-	<ng-template #limitTemplate>
-		<p><ngb-progressbar [type]="limitFound ? 'success' : 'info'"
-			[value]="limitFound ? (limitInfo | async).remaining : 100"
-			[max]  ="limitFound ? (limitInfo | async).limit     : 100"
-			[striped]="!limitFound" [animated]="!limitFound"
-			height="2.25em"
+			Reading Limit...
+		</ngb-progressbar>
+		
+		<ngb-progressbar *ngSwitchCase="'InsideLimit'"
+			[value]="(limitInfo | async).remaining"
+			[max]  ="(limitInfo | async).limit"
+			type="success" height="2.25em"
 		>
-			<ng-container *ngIf="limitFound; else missingLimit">
-				{{(limitInfo | async).remaining}} / {{(limitInfo | async).limit}}
-			</ng-container>
-			<ng-template #missingLimit>
-				Reading Limit...
-			</ng-template>
-		</ngb-progressbar></p>
-	</ng-template>
+			{{(limitInfo | async).remaining}} / {{(limitInfo | async).limit}}
+		</ngb-progressbar>
+		
+		<ngb-progressbar *ngSwitchCase="'ExceededLimit'"
+			[value]="100" [max]="100"
+			type="danger" [striped]="true" height="2.25em"
+		>
+			Exceeded Limit!
+		</ngb-progressbar>
+	</p>
 	
 	<i id="limitDescToggle" class="fas fa-question-circle"
 		placement="right" [ngbTooltip]="limitDesc"
 	></i>
 </div>
-<div class="mb-2"><span class="font-weight-bold">Limit Resets by:</span> {{limitResetDateStr}}</div>
+<div class="mb-5"><span class="font-weight-bold mr-2">Limit Resets by:</span> {{limitResetDateStr}}</div>
 <ng-template #limitDesc>
 	The Github API limits how many requests can be sent.
-	Once that limit is passed, the app won't be able to display any more requests for a while.
+	Once that limit is passed, the app won't be able to
+	request any more issues for a while.
 </ng-template>
