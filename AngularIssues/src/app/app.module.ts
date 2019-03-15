@@ -7,15 +7,21 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap'; // TODO: Import only wha
 import { AppComponent } from './app.component';
 import { IssueService } from './issue-service/issue.service';
 import { IssuesListComponent } from './issues-list/issues-list.component';
-import { CollapsibleComponent } from './collapsible/collapsible.component';
+import { IssueModalComponent } from './issue-modal/issue-modal.component';
+import { IssueAssigneesComponent } from './issue-sections/issue-assignees.component';
+import { IssueTitleComponent     } from './issue-sections/issue-title.component';
+import { IssueUserComponent      } from './issue-sections/issue-user.component';
 import { RateLimitBarComponent } from './rate-limit-bar/rate-limit-bar.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     IssuesListComponent,
-    CollapsibleComponent,
-    RateLimitBarComponent
+    IssueModalComponent,
+    IssueAssigneesComponent,
+    IssueTitleComponent,
+    IssueUserComponent,
+    RateLimitBarComponent,
   ],
   imports: [
     BrowserModule,

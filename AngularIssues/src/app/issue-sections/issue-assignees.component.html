@@ -1,0 +1,27 @@
+<div class="mb-2">
+	<ng-container *ngIf="issue.assignees.length > 0; else noAssignees">
+		<button type="button"
+			class="btn font-weight-bold" [ngClass]="{'btn-outline-primary': hidden, 'btn-primary': !hidden}"
+			(click)="!disabled && toggleAssigneeVisibility()"
+			[attr.aria-expanded]="!hidden" aria-controls="assignees"
+		>
+			Assignees
+			<i class="fas ml-4" [ngClass]="{'fa-caret-right': hidden, 'fa-caret-down': !hidden}"></i>
+		</button>
+		<div class="assignees card card-body pt-1 pb-0" [ngbCollapse]="hidden">
+			<ul><li *ngFor="let user of issue.assignees">
+				<ais-issue-user [user]="user"></ais-issue-user>
+			</li></ul>
+		</div>
+	</ng-container>
+
+	<ng-template #noAssignees>
+		<button type="button"
+			class="btn font-weight-bold btn-outline-secondary"
+			disabled
+		>
+			No Assignees...
+			<i class="fas fa-caret-right ml-4"></i>
+		</button>
+	</ng-template>
+</div>

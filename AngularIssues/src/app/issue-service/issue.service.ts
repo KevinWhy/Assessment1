@@ -21,8 +21,11 @@ export class IssueService {
   private readonly cachedIssuesUrl:  string = 'assets/savedIssuesResponse.json';
   octokit: Octokit;
   
+  getRepoUrl(): string {
+    return 'https://github.com/'+ environment.repoOwner +'/'+ environment.repoName;
+  }
+  
   getRateLimit(): Promise<RateLimit> {
-/*
     // Use cached response
     if (environment.useCachedResponses) {
       return new Promise<RateLimit>((resolve) => resolve(  {
@@ -31,7 +34,6 @@ export class IssueService {
         'resetDate': new Date()
       }  ));
     }
-*/
     // Use live data
     return this.octokit.rateLimit.get().then((resp) => {
       // TODO: Handle failed request?

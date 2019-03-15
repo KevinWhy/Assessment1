@@ -1,0 +1,22 @@
+<ng-template #issueModal let-modal>
+	<div class="modal-header">
+		<h4 class="modal-title">
+			<ais-issue-title [issue]="modalIssue"></ais-issue-title>
+			<h6 class="ml-5">
+				<ais-issue-user [user]="modalIssue.user"></ais-issue-user>
+			</h6>
+		</h4>
+		<button type="button" class="close" aria-label="Close"
+			(click)="modal.dismiss()"
+		><i class="fas fa-times" aria-hidden="true"></i></button>
+	</div>
+	<div class="modal-body">
+		<ais-issue-assignees [issue]="modalIssue"
+			[hidden]="true"
+		></ais-issue-assignees>
+		<div id="modalAssignees" class="card card-body" [ngbCollapse]="assigneesHidden">
+			USERS!
+		</div>
+		<div markdown [data]="modalIssue.body"></div>
+	</div>
+</ng-template>

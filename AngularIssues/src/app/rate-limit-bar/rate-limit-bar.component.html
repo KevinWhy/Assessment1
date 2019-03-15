@@ -1,4 +1,5 @@
-<div class="progress-container w-25"><span>Remaining Requests: </span>
+<div class="progress-container w-25">
+	<span class="font-weight-bold">Remaining Requests: </span>
 	<ng-container *ngIf="!hasLimit; else limitTemplate">
 		<p><ngb-progressbar type="info" [value]="100" [striped]="true"
 			height="2.25em"
@@ -23,10 +24,12 @@
 		</ngb-progressbar></p>
 	</ng-template>
 	
-	<i class="fas fa-question-circle" placement="top" ngbTooltip="About the Rate Limit..."></i>
+	<i id="limitDescToggle" class="fas fa-question-circle"
+		placement="right" [ngbTooltip]="limitDesc"
+	></i>
 </div>
-<div class="collapse">
-	<div class="card card-body w-50 text-white bg-info">
-		Rate Limit info goes here...
-	</div>
-</div>
+<div class="mb-2"><span class="font-weight-bold">Limit Resets by:</span> {{limitResetDateStr}}</div>
+<ng-template #limitDesc>
+	The Github API limits how many requests can be sent.
+	Once that limit is passed, the app won't be able to display any more requests for a while.
+</ng-template>

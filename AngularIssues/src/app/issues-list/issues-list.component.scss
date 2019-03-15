@@ -1,13 +1,25 @@
-.issue-body {
-	.body-container {
-		max-width: 50em;
-		max-height: 5em;
-		overflow: hidden;
+@import "~bootstrap/scss/bootstrap";
+
+$issue-body-height: 5em;
+
+#pagination-container {
+	text-align: center;
+	> * { /* Targets ngb-pagination */
+		display: inline-flex !important;
 	}
-	
-	&.expand .body-container {
-		max-height: initial;
-		overflow-x: scroll;
-		overflow-y: auto;
+}
+
+.issue-body {
+	max-height: $issue-body-height;
+	overflow: hidden;
+}
+.issue-preview {
+	position: relative;
+	&:after {
+		content: '';
+		position: absolute;
+		left: 0;		right: 0;
+		top: 0;		bottom: 0;
+		background-image: linear-gradient(to top, $card-bg, rgba(255, 255, 255, 0));
 	}
 }

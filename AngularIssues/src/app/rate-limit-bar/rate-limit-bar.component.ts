@@ -13,11 +13,13 @@ export class RateLimitBarComponent implements OnInit {
   private limitInfo: BehaviorSubject<RateLimit>;
   private hasLimit: boolean = true;
   private limitFound: boolean = false;
+  limitResetDateStr: string = "";
   
   updateLimit(): void {
     this.issueService.getRateLimit().then((limit: RateLimit) => {
       this.hasLimit = !Number.isNaN(limit.remaining);
       this.limitFound = true;
+      this.limitResetDateStr = limit.resetDate.toLocaleDateString()+ " " +limit.resetDate.toLocaleTimeString();
       this.limitInfo.next(limit);
     });
   }
